@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace RedMoon.DepInjector
+namespace RedMoon.Injector
 {
     public abstract class SingletonToProvider<T> : MonoBehaviour, IProvider where T : MonoBehaviour
     {

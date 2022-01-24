@@ -5,7 +5,7 @@ using UnityEngine;
 using UniRx;
 #endif
 
-namespace RedMoon.DepInjector
+namespace RedMoon.Injector
 {
     /*
      * Credit To Shiny Shoe for Helping me learn this when modding there game.
