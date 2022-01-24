@@ -3,33 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class SingletonToProvider<T> : MonoBehaviour, IProvider where T:MonoBehaviour
+namespace RedMoon.DepInjector
 {
-    [SerializeField]
-    private T _convert;
-
-    public T getRef()
+    public abstract class SingletonToProvider<T> : MonoBehaviour, IProvider where T : MonoBehaviour
     {
-        return _convert;
-    }
+        [SerializeField]
+        private T _convert;
 
-    public void getRef(ref T val)
-    {
-        val = _convert;
-    }
+        public T getRef()
+        {
+            return _convert;
+        }
 
-    private void OnEnable()
-    {
-        DepInjector.AddProvider(this);
-    }
+        public void getRef(ref T val)
+        {
+            val = _convert;
+        }
 
-    private void OnDisable()
-    {
-        DepInjector.Remove(this);
-    }
+        private void OnEnable()
+        {
+            DepInjector.AddProvider(this);
+        }
 
-    private void OnDestroy()
-    {
-        DepInjector.Remove(this);
+        private void OnDisable()
+        {
+            DepInjector.Remove(this);
+        }
+
+        private void OnDestroy()
+        {
+            DepInjector.Remove(this);
+        }
     }
 }

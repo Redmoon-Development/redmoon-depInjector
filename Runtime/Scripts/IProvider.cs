@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IProvider
+namespace RedMoon.DepInjector
 {
+    public interface IProvider
+    {
 
+    }
 }

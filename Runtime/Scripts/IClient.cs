@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IClient
+namespace RedMoon.DepInjector
 {
-    void NewProviderAvailable(IProvider newProvider);
-    void ProviderRemoved(IProvider removeProvider);
-    void NewProviderFullyInstalled(IProvider newProvider);
+    public interface IClient
+    {
+        void NewProviderAvailable(IProvider newProvider);
+        void ProviderRemoved(IProvider removeProvider);
+        void NewProviderFullyInstalled(IProvider newProvider);
+    }
 }

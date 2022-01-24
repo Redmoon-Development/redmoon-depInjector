@@ -5,176 +5,179 @@ using UnityEngine;
 using UniRx;
 #endif
 
-/*
- * Credit To Shiny Shoe for Helping me learn this when modding there game.
- * Dep Injection is important kids
- */
-public static class DepInjector
+namespace RedMoon.DepInjector
 {
-    public static void AddProvider(IProvider addProvider)
+    /*
+     * Credit To Shiny Shoe for Helping me learn this when modding there game.
+     * Dep Injection is important kids
+     */
+    public static class DepInjector
     {
-        if(addProvider == null || providers.Contains(addProvider))
+        public static void AddProvider(IProvider addProvider)
         {
-            return;
-        }
-
-        foreach(IClient client in clients)
-        {
-            client.NewProviderAvailable(addProvider);
-        }
-        if(addProvider is IClient addClient)
-        {
-            AddClient(addClient);
-        }
-        foreach(IClient client in clients)
-        {
-            client.NewProviderFullyInstalled(addProvider);
-        }
-        providers.Add(addProvider);
-    }
-
-    public static void AddClient(IClient addClient)
-    {
-        if(addClient == null || clients.Contains(addClient))
-        {
-            return;
-        }
-
-        foreach(IProvider provider in providers)
-        {
-            addClient.NewProviderAvailable(provider);
-        }
-        foreach (IProvider provider in providers)
-        {
-            addClient.NewProviderFullyInstalled(provider);
-        }
-        clients.Add(addClient);
-    }
-
-    public static void Remove<T>(T o)
-    {
-        if(o is IProvider p)
-        {
-            RemoveProvider(p);
-        }
-
-        if(o is IClient c)
-        {
-            RemoveClient(c);
-        }
-    }
-
-    public static bool MapProvider<T,U>(IProvider provider, ref U val) where T: SingletonToProvider<U> where U : MonoBehaviour
-    {
-        if (provider is T ret)
-        {
-            val = ret.getRef();
-            return true;
-        }
-        return false;
-    }
-
-    public static bool UnmapProvider<T,U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
-    {
-        if (provider is T)
-        {
-            val = default(U);
-            return true;
-        }
-        return false;
-    }
-    
-    public static bool MapProvider<T>(IProvider provider, ref T val) where T : IProvider
-    {
-        if(provider is T ret)
-        {
-            val = ret;
-            return true;
-        }
-        return false;
-    }
-
-
-
-    public static bool UnmapProvider<T>(IProvider provider, ref T val) where T : IProvider
-    {
-        if(provider is T)
-        {
-            val = default(T);
-            return true;
-        }
-        return false;
-    }
-
-
-    private static void RemoveProvider(IProvider removeProvider)
-    {
-        if (!providers.Contains(removeProvider))
-        {
-            return;
-        }
-        foreach(IClient client in clients)
-        {
-            if(client != removeProvider)
+            if (addProvider == null || providers.Contains(addProvider))
             {
-                client.ProviderRemoved(removeProvider);
+                return;
+            }
+
+            foreach (IClient client in clients)
+            {
+                client.NewProviderAvailable(addProvider);
+            }
+            if (addProvider is IClient addClient)
+            {
+                AddClient(addClient);
+            }
+            foreach (IClient client in clients)
+            {
+                client.NewProviderFullyInstalled(addProvider);
+            }
+            providers.Add(addProvider);
+        }
+
+        public static void AddClient(IClient addClient)
+        {
+            if (addClient == null || clients.Contains(addClient))
+            {
+                return;
+            }
+
+            foreach (IProvider provider in providers)
+            {
+                addClient.NewProviderAvailable(provider);
+            }
+            foreach (IProvider provider in providers)
+            {
+                addClient.NewProviderFullyInstalled(provider);
+            }
+            clients.Add(addClient);
+        }
+
+        public static void Remove<T>(T o)
+        {
+            if (o is IProvider p)
+            {
+                RemoveProvider(p);
+            }
+
+            if (o is IClient c)
+            {
+                RemoveClient(c);
             }
         }
-        providers.Remove(removeProvider);
-    }
 
-    private static void RemoveClient(IClient removeClient)
-    {
-        if (clients.Contains(removeClient))
+        public static bool MapProvider<T, U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
         {
-            clients.Remove(removeClient);
+            if (provider is T ret)
+            {
+                val = ret.getRef();
+                return true;
+            }
+            return false;
         }
-    }
 
-    #if UNIRX_PRESENT
-    public static bool MapProvider<T, U>(IProvider provider, ReactiveProperty<U> val) where T : SingletonToProvider<U> where U : MonoBehaviour
-    {
-        if (provider is T ret)
+        public static bool UnmapProvider<T, U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
         {
-            val.Value = ret.getRef();
-            return true;
+            if (provider is T)
+            {
+                val = default(U);
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    public static bool UnmapProvider<T, U>(IProvider provider, ReactiveProperty<U> val) where T : SingletonToProvider<U> where U : MonoBehaviour
-    {
-        if (provider is T)
+        public static bool MapProvider<T>(IProvider provider, ref T val) where T : IProvider
         {
-            val.Value = default(U);
-            return true;
+            if (provider is T ret)
+            {
+                val = ret;
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
-    public static bool MapProvider<T>(IProvider provider, ReactiveProperty<T> val) where T : IProvider
-    {
-        if (provider is T ret)
+
+
+
+        public static bool UnmapProvider<T>(IProvider provider, ref T val) where T : IProvider
         {
-            val.Value = ret;
-            return true;
+            if (provider is T)
+            {
+                val = default(T);
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    public static bool UnmapProvider<T>(IProvider provider, ReactiveProperty<T> val) where T : IProvider
-    {
-        if (provider is T)
+
+        private static void RemoveProvider(IProvider removeProvider)
         {
-            val.Value = default(T);
-            return true;
+            if (!providers.Contains(removeProvider))
+            {
+                return;
+            }
+            foreach (IClient client in clients)
+            {
+                if (client != removeProvider)
+                {
+                    client.ProviderRemoved(removeProvider);
+                }
+            }
+            providers.Remove(removeProvider);
         }
-        return false;
+
+        private static void RemoveClient(IClient removeClient)
+        {
+            if (clients.Contains(removeClient))
+            {
+                clients.Remove(removeClient);
+            }
+        }
+
+#if UNIRX_PRESENT
+        public static bool MapProvider<T, U>(IProvider provider, ReactiveProperty<U> val) where T : SingletonToProvider<U> where U : MonoBehaviour
+        {
+            if (provider is T ret)
+            {
+                val.Value = ret.getRef();
+                return true;
+            }
+            return false;
+        }
+
+        public static bool UnmapProvider<T, U>(IProvider provider, ReactiveProperty<U> val) where T : SingletonToProvider<U> where U : MonoBehaviour
+        {
+            if (provider is T)
+            {
+                val.Value = default(U);
+                return true;
+            }
+            return false;
+        }
+        public static bool MapProvider<T>(IProvider provider, ReactiveProperty<T> val) where T : IProvider
+        {
+            if (provider is T ret)
+            {
+                val.Value = ret;
+                return true;
+            }
+            return false;
+        }
+
+        public static bool UnmapProvider<T>(IProvider provider, ReactiveProperty<T> val) where T : IProvider
+        {
+            if (provider is T)
+            {
+                val.Value = default(T);
+                return true;
+            }
+            return false;
+        }
+#endif
+
+
+        private static volatile List<IProvider> providers = new List<IProvider>();
+        private static volatile List<IClient> clients = new List<IClient>();
+
+        private const string Credits = "Thank you, Mark for helping me learn this when I was modding your game";
     }
-    #endif
-
-
-    private static volatile List<IProvider> providers = new List<IProvider>();
-    private static volatile List<IClient> clients = new List<IClient>();
-
-    private const string Credits = "Thank you, Mark for helping me learn this when I was modding your game";
 }
