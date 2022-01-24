@@ -1,9 +1,11 @@
 {
-  "name": "io.github.crazyjackel.redmoon-depInjector",
-  "displayName": "Red Moon Dependency Injector",
-  "version": "1.0.0",
-  "unity": "2020.3",
+  "author": {
+    "name": "Jackson Levitt",
+    "email": "jackel1020@protonmail.com"
+  },
   "description": "A Dependency Injector for Unity",
-  "category": "Unity",
-  "type": "library",
+  "displayName": "Red Moon Dependency Injector",
+  "name": "io.crazyjackel.redmoon-depinjector",
+  "unity": "2020.3",
+  "version": "1.0.0"
 }
