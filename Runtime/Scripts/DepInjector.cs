@@ -1,16 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
+using System.Linq;
 #if UNIRX_PRESENT
 using UniRx;
 #endif
 
 namespace RedMoon.Injector
 {
-    /*
-     * Credit To Shiny Shoe for Helping me learn this when modding there game.
-     * Dep Injection is important kids
-     */
     public static class DepInjector
     {
         public static void AddProvider(IProvider addProvider)
@@ -24,15 +22,17 @@ namespace RedMoon.Injector
             {
                 client.NewProviderAvailable(addProvider);
             }
+
             if (addProvider is IClient addClient)
             {
                 AddClient(addClient);
             }
+
+            providers.Add(addProvider);
             foreach (IClient client in clients)
             {
                 client.NewProviderFullyInstalled(addProvider);
             }
-            providers.Add(addProvider);
         }
 
         public static void AddClient(IClient addClient)
@@ -46,11 +46,49 @@ namespace RedMoon.Injector
             {
                 addClient.NewProviderAvailable(provider);
             }
+
+            clients.Add(addClient);
             foreach (IProvider provider in providers)
             {
                 addClient.NewProviderFullyInstalled(provider);
             }
-            clients.Add(addClient);
+        }
+
+        public static bool MapProvider<T, U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
+        {
+            if (provider is T ret)
+            {
+                val = ret.getRef();
+                return true;
+            }
+            return false;
+        }
+        public static bool UnmapProvider<T, U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
+        {
+            if (provider is T)
+            {
+                val = default(U);
+                return true;
+            }
+            return false;
+        }
+        public static bool MapProvider<T>(IProvider provider, ref T val) where T : IProvider
+        {
+            if (provider is T ret)
+            {
+                val = ret;
+                return true;
+            }
+            return false;
+        }
+        public static bool UnmapProvider<T>(IProvider provider, ref T val) where T : IProvider
+        {
+            if (provider is T)
+            {
+                val = default(T);
+                return true;
+            }
+            return false;
         }
 
         public static void Remove<T>(T o)
@@ -65,50 +103,6 @@ namespace RedMoon.Injector
                 RemoveClient(c);
             }
         }
-
-        public static bool MapProvider<T, U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
-        {
-            if (provider is T ret)
-            {
-                val = ret.getRef();
-                return true;
-            }
-            return false;
-        }
-
-        public static bool UnmapProvider<T, U>(IProvider provider, ref U val) where T : SingletonToProvider<U> where U : MonoBehaviour
-        {
-            if (provider is T)
-            {
-                val = default(U);
-                return true;
-            }
-            return false;
-        }
-
-        public static bool MapProvider<T>(IProvider provider, ref T val) where T : IProvider
-        {
-            if (provider is T ret)
-            {
-                val = ret;
-                return true;
-            }
-            return false;
-        }
-
-
-
-        public static bool UnmapProvider<T>(IProvider provider, ref T val) where T : IProvider
-        {
-            if (provider is T)
-            {
-                val = default(T);
-                return true;
-            }
-            return false;
-        }
-
-
         private static void RemoveProvider(IProvider removeProvider)
         {
             if (!providers.Contains(removeProvider))
@@ -124,7 +118,6 @@ namespace RedMoon.Injector
             }
             providers.Remove(removeProvider);
         }
-
         private static void RemoveClient(IClient removeClient)
         {
             if (clients.Contains(removeClient))
@@ -173,11 +166,24 @@ namespace RedMoon.Injector
             return false;
         }
 #endif
-
+        public static T GetProvider<T>() where T : IProvider
+        {
+            return providers.OfType<T>().FirstOrDefault();
+        }
+        public static List<T> GetProviders<T>() where T: IProvider
+        {
+            return providers.OfType<T>().ToList();
+        }
+        public static T GetClient<T>() where T : IClient
+        {
+            return clients.OfType<T>().FirstOrDefault();
+        }
+        public static List<T> GetClients<T>() where T : IClient
+        {
+            return clients.OfType<T>().ToList();
+        }
 
         private static volatile List<IProvider> providers = new List<IProvider>();
         private static volatile List<IClient> clients = new List<IClient>();
-
-        private const string Credits = "Thank you, Mark for helping me learn this when I was modding your game";
     }
 }
