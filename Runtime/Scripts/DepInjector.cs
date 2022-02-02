@@ -90,7 +90,19 @@ namespace RedMoon.Injector
             }
             return false;
         }
+        public static void Add<T>(T o)
+        {
+            if(o is IProvider p)
+            {
+                AddProvider(p);
+                return;
+            }
 
+            if(o is IClient c)
+            {
+                AddClient(c);
+            }
+        }
         public static void Remove<T>(T o)
         {
             if (o is IProvider p)
